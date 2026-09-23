@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# Real-time wallpaper switcher for the water-surface Quickshell config.
+# Wraps `qs ipc call -c water-surface wallpaper change ...` so callers don't
+# need to remember the IPC target/argument order.
+set -euo pipefail
+
+SHELL_NAME="water-surface"
+ANIMATIONS="crossfade ripple iris wipe"
+DIRECTIONS="left right up down"
+
+MONITOR=""
+ANIMATION="crossfade"
+DURATION="1.0"
+FPS="30"
+DIRECTION="left"
+IMAGE_PATH=""
+
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") <path> [options]
+
+Switches the water-surface wallpaper in real time, animating the change.
+
+Arguments:
+  <path>                     Path to the new wallpaper image (required)
+
+Options:
+  -m, --monitor NAME         Output name (e.g. DP-1) to target; omit for the
+                              global fallback image (default: all monitors
+                              without a per-monitor override)
+  -a, --animation NAME       Transition animation: $ANIMATIONS (default: $ANIMATION)
+  -d, --duration SECONDS     Total transition length in seconds (default: $DURATION)
+  -f, --fps N                Transition frame rate, independent of the water
+                              simulation's own FPS (default: $FPS)
+      --direction DIR        Sweep direction, wipe animation only: $DIRECTIONS
+                              (default: $DIRECTION)
+  -h, --help                 Show this help and exit
+
+Examples:
+  $(basename "$0") ~/Pictures/lake.jpg
+  $(basename "$0") ~/Pictures/sunset.jpg -a ripple -d 2.0 -f 60
+  $(basename "$0") ~/Pictures/mountains.jpg -m DP-1 -a wipe --direction up
+EOF
+}
+
+contains() {
+    local needle="$1"; shift
+    for item in "$@"; do
+        [[ "$item" == "$needle" ]] && return 0
+    done
+    return 1
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -m|--monitor)   MONITOR="$2"; shift 2 ;;
+        -a|--animation) ANIMATION="$2"; shift 2 ;;
+        -d|--duration)  DURATION="$2"; shift 2 ;;
+        -f|--fps)       FPS="$2"; shift 2 ;;
+        --direction)    DIRECTION="$2"; shift 2 ;;
+        -h|--help)      usage; exit 0 ;;
+        --)             shift; break ;;
+        -*)
+            echo "error: unknown option '$1'" >&2
+            usage >&2
+            exit 1
+            ;;
+        *)
+            if [[ -n "$IMAGE_PATH" ]]; then
+                echo "error: unexpected extra argument '$1'" >&2
+                exit 1
+            fi
+            IMAGE_PATH="$1"
+            shift
+            ;;
+    esac
+done
+
+if [[ -z "$IMAGE_PATH" ]]; then
+    echo "error: missing required <path> argument" >&2
+    usage >&2
+    exit 1
+fi
+
+if [[ ! -f "$IMAGE_PATH" ]]; then
+    echo "error: file not found: $IMAGE_PATH" >&2
+    exit 1
+fi
+
+if ! contains "$ANIMATION" $ANIMATIONS; then
+    echo "error: unknown animation '$ANIMATION', expected one of: $ANIMATIONS" >&2
+    exit 1
+fi
+
+if ! contains "$DIRECTION" $DIRECTIONS; then
+    echo "error: unknown direction '$DIRECTION', expected one of: $DIRECTIONS" >&2
+    exit 1
+fi
+
+IMAGE_PATH="$(realpath "$IMAGE_PATH")"
+
+RESULT="$(qs ipc -c "$SHELL_NAME" call wallpaper change "$MONITOR" "$IMAGE_PATH" "$ANIMATION" "$DURATION" "$FPS" "$DIRECTION")"
+echo "$RESULT"
+
+if [[ "$RESULT" != "ok" ]]; then
+    exit 1
+fi
