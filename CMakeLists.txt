@@ -24,7 +24,7 @@ message(STATUS "qsb found: ${QSB_TOOL}")
 # The .qsb files are written alongside the source files so they are part of
 # the package tree and require no separate install step.
 # ---------------------------------------------------------------------------
-set(SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/water-surface/shaders")
+set(SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/wet-wallpaper/shaders")
 
 set(SHADER_SOURCES
     "${SHADER_DIR}/water_physics.vert"

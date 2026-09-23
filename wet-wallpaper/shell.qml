@@ -1,7 +1,7 @@
 import Quickshell
 import Quickshell.Wayland
 
-// Entry point for the `water-surface` Quickshell config. Hosts one
+// Entry point for the `wet-wallpaper` Quickshell config. Hosts one
 // WaterSurface scene per connected screen inside a wlr-layer-shell surface
 // pinned to the background layer — the standalone-Hyprland replacement for
 // Plasma's per-screen WallpaperItem.
@@ -30,7 +30,7 @@ ShellRoot {
             color: "#080F2E"
 
             WlrLayershell.layer: WlrLayer.Background
-            WlrLayershell.namespace: "water-surface"
+            WlrLayershell.namespace: "wet-wallpaper"
 
             WaterSurface {
                 anchors.fill: parent

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Real-time wallpaper switcher for the water-surface Quickshell config.
-# Wraps `qs ipc call -c water-surface wallpaper change ...` so callers don't
+# Real-time wallpaper switcher for the wet-wallpaper Quickshell config.
+# Wraps `qs ipc call -c wet-wallpaper wallpaper change ...` so callers don't
 # need to remember the IPC target/argument order.
 set -euo pipefail
 
-SHELL_NAME="water-surface"
+SHELL_NAME="wet-wallpaper"
 ANIMATIONS="crossfade ripple iris wipe"
 DIRECTIONS="left right up down"
 
@@ -19,7 +19,7 @@ usage() {
     cat <<EOF
 Usage: $(basename "$0") <path> [options]
 
-Switches the water-surface wallpaper in real time, animating the change.
+Switches the wet-wallpaper background in real time, animating the change.
 
 Arguments:
   <path>                     Path to the new wallpaper image (required)

@@ -93,7 +93,7 @@ Singleton {
             : root.setImage(path)
     }
 
-    // Real-time control surface: `qs ipc call -c water-surface wallpaper ...`
+    // Real-time control surface: `qs ipc call -c wet-wallpaper wallpaper ...`
     IpcHandler {
         target: "wallpaper"
 

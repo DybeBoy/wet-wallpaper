@@ -23,26 +23,26 @@
           # installed verbatim. Shaders are shipped pre-compiled (.qsb), so no
           # Qt/qsb dependency is needed just to install this.
           default = pkgs.stdenvNoCC.mkDerivation {
-            pname = "water-surface-quickshell";
+            pname = "wet-wallpaper";
             version = "1.0.0";
-            src = ./water-surface;
+            src = ./wet-wallpaper;
             dontBuild = true;
             installPhase = ''
-              mkdir -p "$out/share/water-surface"
-              cp -r . "$out/share/water-surface"
+              mkdir -p "$out/share/wet-wallpaper"
+              cp -r . "$out/share/wet-wallpaper"
             '';
           };
 
           # CLI wrapper around `qs ipc call ... wallpaper change`, for
           # real-time wallpaper switching with an animated transition.
           wallpaperScript = pkgs.stdenvNoCC.mkDerivation {
-            pname = "water-surface-wallpaper";
+            pname = "wet-wallpaper-cli";
             version = "1.0.0";
-            src = ./water-surface/bin/water-surface-wallpaper;
+            src = ./wet-wallpaper/bin/wet-wallpaper;
             dontUnpack = true;
             installPhase = ''
               mkdir -p "$out/bin"
-              install -m755 "$src" "$out/bin/water-surface-wallpaper"
+              install -m755 "$src" "$out/bin/wet-wallpaper"
             '';
           };
         });
